@@ -10,8 +10,8 @@ import (
 func TestInitExitedNotifier(t *testing.T) {
 	notifier := NewExitedNotifier()
 
-	if notifier.Channel == nil || notifier.Exited != 0 {
-		t.Error("Channel must be not nil and Exited must be 0")
+	if notifier.Channel == nil || notifier.exited != 0 {
+		t.Error("Channel must be not nil and exited must be 0")
 	}
 }
 
@@ -34,7 +34,7 @@ func TestTriggerOrCancel(t *testing.T) {
 		time.Sleep(1 * time.Second)
 
 		if atomic.LoadInt32(&status) != 1 {
-			t.Error("Triger was not worked.")
+			t.Error("TriggerOrCancel did not worked.")
 			t.FailNow()
 		}
 	}()
@@ -59,7 +59,7 @@ func TestTriggerOrCancel(t *testing.T) {
 		time.Sleep(1 * time.Second)
 
 		if atomic.LoadInt32(&status) != 0 {
-			t.Error("canceller was not worked.")
+			t.Error("Canceller did not worked.")
 			t.FailNow()
 		}
 	}()
@@ -83,7 +83,7 @@ func TestWait(t *testing.T) {
 		time.Sleep(1 * time.Second)
 
 		if atomic.LoadInt32(&status) != 1 {
-			t.Error("Wait was not worked.")
+			t.Error("Wait did not worked.")
 			t.FailNow()
 		}
 	}()
@@ -106,7 +106,7 @@ func TestWaitWithContext(t *testing.T) {
 		time.Sleep(1 * time.Second)
 
 		if atomic.LoadInt32(&status) != 1 {
-			t.Error("WaitWithContext was not worked.")
+			t.Error("WaitWithContext did not worked.")
 			t.FailNow()
 		}
 
