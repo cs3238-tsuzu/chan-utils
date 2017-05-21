@@ -5,8 +5,8 @@ import (
 	"sync/atomic"
 )
 
-// Trigger wakes up a waiting goroutine many times
-// The number that Wait() or <-trigger is called is insured.
+// Trigger wakes up a waiting goroutine many times.
+// The number that Wait() or WaitWithContext() is called is insured.
 // Note that Wait() or <-trigger can be used by only one goroutine.
 type Trigger struct {
 	trigger SimpleTrigger

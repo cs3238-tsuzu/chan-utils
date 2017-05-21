@@ -5,13 +5,13 @@ import (
 	"sync/atomic"
 )
 
-// ExitedNotifier One can convey exited status to the others
+// ExitedNotifier When you call Finish(), all waiting goroutines will be resumed.
 type ExitedNotifier struct {
 	Channel chan bool
 	exited  int32
 }
 
-// Finish communicates exited status to callers of Wait() and TriggerOrCancel()
+// Finish resumes all waiting goroutines
 func (en ExitedNotifier) Finish() {
 	if atomic.CompareAndSwapInt32(&en.exited, int32(0), int32(1)) {
 		close(en.Channel)

@@ -1,6 +1,10 @@
 package chanUtils
 
-// SimpleTrigger wakes up a waiting goroutine many times
+import (
+	"context"
+)
+
+// SimpleTrigger wakes up one waiting goroutine many times.
 // The number that Wait() or <-trigger is called is NOT insured.
 // Note that Wait() or <-trigger can be used by only one goroutine.
 type SimpleTrigger chan bool
@@ -16,6 +20,17 @@ func (trigger SimpleTrigger) Wake() {
 // Wait waits until Wake() is called.
 func (trigger SimpleTrigger) Wait() {
 	<-trigger
+}
+
+// WaitWithContext waits until Wake() or ctx.Done()
+func (trigger SimpleTrigger) WaitWithContext(ctx context.Context) error {
+	select {
+	case <-trigger:
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+
+	return nil
 }
 
 // You can write like the following example
