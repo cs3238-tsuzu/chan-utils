@@ -8,12 +8,12 @@ import (
 // ExitedNotifier One can convey exited status to the others
 type ExitedNotifier struct {
 	Channel chan bool
-	Exited  int32
+	exited  int32
 }
 
 // Finish communicates exited status to callers of Wait() and TriggerOrCancel()
 func (en ExitedNotifier) Finish() {
-	if atomic.CompareAndSwapInt32(&en.Exited, int32(0), int32(1)) {
+	if atomic.CompareAndSwapInt32(&en.exited, int32(0), int32(1)) {
 		close(en.Channel)
 	}
 }
@@ -54,6 +54,6 @@ func (en ExitedNotifier) TriggerOrCancel(f func()) func() {
 func NewExitedNotifier() ExitedNotifier {
 	return ExitedNotifier{
 		Channel: make(chan bool),
-		Exited:  0,
+		exited:  0,
 	}
 }
