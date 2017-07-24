@@ -12,19 +12,19 @@ type ExitedNotifier struct {
 }
 
 // Finish resumes all waiting goroutines
-func (en ExitedNotifier) Finish() {
-	if atomic.CompareAndSwapInt32(&en.exited, int32(0), int32(1)) {
+func (en *ExitedNotifier) Finish() {
+	if atomic.AddInt32(&en.exited, 1) == 1 {
 		close(en.Channel)
 	}
 }
 
 // Wait waits Finish() is called.
-func (en ExitedNotifier) Wait() {
+func (en *ExitedNotifier) Wait() {
 	<-en.Channel
 }
 
 // WaitWithContext waits until Finish() is called or ctx is triggered.
-func (en ExitedNotifier) WaitWithContext(ctx context.Context) {
+func (en *ExitedNotifier) WaitWithContext(ctx context.Context) {
 	select {
 	case <-ctx.Done():
 	case <-en.Channel:
@@ -34,7 +34,7 @@ func (en ExitedNotifier) WaitWithContext(ctx context.Context) {
 // TriggerOrCancel sets f() to be called when Finish() is called.
 // The returned function is a canceller.
 // Note that you must call this when you no longer need f() to be called.
-func (en ExitedNotifier) TriggerOrCancel(f func()) func() {
+func (en *ExitedNotifier) TriggerOrCancel(f func()) func() {
 	canceler := make(chan bool)
 	go func() {
 		select {
@@ -51,8 +51,8 @@ func (en ExitedNotifier) TriggerOrCancel(f func()) func() {
 }
 
 // NewExitedNotifier creates a new ExitedNotifier
-func NewExitedNotifier() ExitedNotifier {
-	return ExitedNotifier{
+func NewExitedNotifier() *ExitedNotifier {
+	return &ExitedNotifier{
 		Channel: make(chan bool),
 		exited:  0,
 	}
